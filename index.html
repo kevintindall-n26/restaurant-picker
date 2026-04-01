@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Spin the Wheel</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: #1a1a2e;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    font-family: 'Segoe UI', sans-serif;
+    color: #fff;
+  }
+  h1 {
+    font-size: 2rem;
+    margin-bottom: 2rem;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: #e0e0ff;
+  }
+  .wheel-container {
+    position: relative;
+    width: 400px;
+    height: 400px;
+  }
+  canvas {
+    border-radius: 50%;
+    box-shadow: 0 0 40px rgba(120, 80, 255, 0.5);
+  }
+  .pointer {
+    position: absolute;
+    top: 50%;
+    right: -20px;
+    transform: translateY(-50%);
+    width: 0;
+    height: 0;
+    border-top: 20px solid transparent;
+    border-bottom: 20px solid transparent;
+    border-right: 40px solid #ff4466;
+    filter: drop-shadow(0 0 6px rgba(255, 68, 102, 0.8));
+  }
+  button {
+    margin-top: 2.5rem;
+    padding: 0.9rem 3rem;
+    font-size: 1.2rem;
+    font-weight: bold;
+    background: linear-gradient(135deg, #7b2ff7, #f107a3);
+    color: #fff;
+    border: none;
+    border-radius: 50px;
+    cursor: pointer;
+    letter-spacing: 1px;
+    transition: transform 0.1s, box-shadow 0.1s;
+    box-shadow: 0 4px 20px rgba(123, 47, 247, 0.5);
+  }
+  button:hover { transform: scale(1.05); box-shadow: 0 6px 28px rgba(123, 47, 247, 0.7); }
+  button:active { transform: scale(0.97); }
+  button:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+  #result {
+    margin-top: 1.8rem;
+    font-size: 1.6rem;
+    font-weight: bold;
+    min-height: 2.5rem;
+    color: #ffd700;
+    text-shadow: 0 0 12px rgba(255, 215, 0, 0.6);
+    letter-spacing: 1px;
+    text-align: center;
+  }
+</style>
+</head>
+<body>
+<h1>Spin the Wheel</h1>
+<div class="wheel-container">
+  <canvas id="wheel" width="400" height="400"></canvas>
+  <div class="pointer"></div>
+</div>
+<button id="spinBtn" onclick="spin()">SPIN</button>
+<div id="result"></div>
+
+<script>
+  const options = ["Besh", "Delores", "Mumbai Local", "The Chinese Place"];
+  const colors = ["#7b2ff7", "#f107a3", "#00c9a7", "#ff7f50"];
+  const textColors = ["#fff", "#fff", "#000", "#fff"];
+
+  const canvas = document.getElementById("wheel");
+  const ctx = canvas.getContext("2d");
+  const cx = canvas.width / 2;
+  const cy = canvas.height / 2;
+  const radius = cx - 10;
+  const arc = (2 * Math.PI) / options.length;
+
+  let currentAngle = 0;
+  let spinning = false;
+
+  function drawWheel(angle) {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    options.forEach((label, i) => {
+      const start = angle + i * arc;
+      const end = start + arc;
+
+      // Segment
+      ctx.beginPath();
+      ctx.moveTo(cx, cy);
+      ctx.arc(cx, cy, radius, start, end);
+      ctx.closePath();
+      ctx.fillStyle = colors[i];
+      ctx.fill();
+      ctx.strokeStyle = "rgba(255,255,255,0.15)";
+      ctx.lineWidth = 2;
+      ctx.stroke();
+
+      // Label
+      ctx.save();
+      ctx.translate(cx, cy);
+      ctx.rotate(start + arc / 2);
+      ctx.textAlign = "right";
+      ctx.fillStyle = textColors[i];
+      ctx.font = "bold 18px 'Segoe UI', sans-serif";
+      ctx.shadowColor = "rgba(0,0,0,0.4)";
+      ctx.shadowBlur = 4;
+      ctx.fillText(label, radius - 16, 6);
+      ctx.restore();
+    });
+
+    // Center circle
+    ctx.beginPath();
+    ctx.arc(cx, cy, 18, 0, 2 * Math.PI);
+    ctx.fillStyle = "#1a1a2e";
+    ctx.fill();
+    ctx.strokeStyle = "rgba(255,255,255,0.3)";
+    ctx.lineWidth = 2;
+    ctx.stroke();
+  }
+
+  function spin() {
+    if (spinning) return;
+    spinning = true;
+    document.getElementById("spinBtn").disabled = true;
+    document.getElementById("result").textContent = "";
+
+    const extraSpins = (5 + Math.floor(Math.random() * 5)) * 2 * Math.PI;
+    const targetOffset = Math.random() * 2 * Math.PI;
+    const totalRotation = extraSpins + targetOffset;
+    const duration = 4000;
+    const startTime = performance.now();
+    const startAngle = currentAngle;
+
+    function easeOut(t) {
+      return 1 - Math.pow(1 - t, 4);
+    }
+
+    function animate(now) {
+      const elapsed = now - startTime;
+      const t = Math.min(elapsed / duration, 1);
+      currentAngle = startAngle + totalRotation * easeOut(t);
+      drawWheel(currentAngle);
+
+      if (t < 1) {
+        requestAnimationFrame(animate);
+      } else {
+        spinning = false;
+        document.getElementById("spinBtn").disabled = false;
+        showResult();
+      }
+    }
+
+    requestAnimationFrame(animate);
+  }
+
+  function showResult() {
+    // Pointer is on the right side (angle = 0 in canvas = 3 o'clock)
+    // Normalize angle to find which segment is at the pointer
+    const normalized = ((2 * Math.PI - (currentAngle % (2 * Math.PI))) + 2 * Math.PI) % (2 * Math.PI);
+    const index = Math.floor(normalized / arc) % options.length;
+    document.getElementById("result").textContent = options[index];
+  }
+
+  drawWheel(currentAngle);
+</script>
+</body>
+</html>
