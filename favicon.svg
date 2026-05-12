@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+  <!-- 7 equal pie segments, radius 15, center 16,16 -->
+  <!-- Segment 0: 0° → 51.43° -->
+  <path d="M16 16 L31 16 A15 15 0 0 1 25.36 27.68 Z" fill="#7b2ff7"/>
+  <!-- Segment 1: 51.43° → 102.86° -->
+  <path d="M16 16 L25.36 27.68 A15 15 0 0 1 12.62 30.64 Z" fill="#f107a3"/>
+  <!-- Segment 2: 102.86° → 154.29° -->
+  <path d="M16 16 L12.62 30.64 A15 15 0 0 1 2.35 22.64 Z" fill="#00c9a7"/>
+  <!-- Segment 3: 154.29° → 205.71° -->
+  <path d="M16 16 L2.35 22.64 A15 15 0 0 1 2.35 9.36 Z" fill="#ff7f50"/>
+  <!-- Segment 4: 205.71° → 257.14° -->
+  <path d="M16 16 L2.35 9.36 A15 15 0 0 1 12.62 1.36 Z" fill="#4caf50"/>
+  <!-- Segment 5: 257.14° → 308.57° -->
+  <path d="M16 16 L12.62 1.36 A15 15 0 0 1 25.36 4.32 Z" fill="#2196f3"/>
+  <!-- Segment 6: 308.57° → 360° -->
+  <path d="M16 16 L25.36 4.32 A15 15 0 0 1 31 16 Z" fill="#ff9800"/>
+  <!-- Thin white dividers -->
+  <path d="M16 16 L31 16 M16 16 L25.36 27.68 M16 16 L12.62 30.64 M16 16 L2.35 22.64 M16 16 L2.35 9.36 M16 16 L12.62 1.36 M16 16 L25.36 4.32" stroke="rgba(255,255,255,0.4)" stroke-width="0.8" fill="none"/>
+  <!-- Outer ring -->
+  <circle cx="16" cy="16" r="15" fill="none" stroke="rgba(255,255,255,0.3)" stroke-width="1"/>
+  <!-- Center hub -->
+  <circle cx="16" cy="16" r="3" fill="#1a1a2e"/>
+  <circle cx="16" cy="16" r="3" fill="none" stroke="rgba(255,255,255,0.4)" stroke-width="0.8"/>
+</svg>
