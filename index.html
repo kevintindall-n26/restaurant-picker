@@ -83,6 +83,27 @@
     transition: opacity 0.2s;
   }
   #github-link:hover { opacity: 1; }
+  #map-links {
+    display: flex;
+    gap: 0.6rem;
+    margin-top: 0.9rem;
+    justify-content: center;
+    flex-wrap: wrap;
+    min-height: 2rem;
+  }
+  .map-link {
+    padding: 0.35rem 1rem;
+    font-size: 0.78rem;
+    font-weight: 600;
+    border-radius: 50px;
+    text-decoration: none;
+    letter-spacing: 0.4px;
+    transition: opacity 0.15s, transform 0.1s;
+  }
+  .map-link:hover { opacity: 0.82; transform: scale(1.05); }
+  .map-link-google { background: #4285f4; color: #fff; }
+  .map-link-apple  { background: #e8e8e8; color: #1c1c1e; }
+  .map-link-osm    { background: #7ebc34; color: #fff; }
 </style>
 </head>
 <body>
@@ -93,6 +114,7 @@
 </div>
 <button id="spinBtn" onclick="spin()">SPIN</button>
 <div id="result"></div>
+<div id="map-links"></div>
 <a id="github-link" href="https://github.com/kevintindall-n26/restaurant-picker" target="_blank">GitHub</a>
 
 <script>
@@ -155,6 +177,7 @@
     spinning = true;
     document.getElementById("spinBtn").disabled = true;
     document.getElementById("result").textContent = "";
+    document.getElementById("map-links").innerHTML = "";
 
     const extraSpins = (5 + Math.floor(Math.random() * 5)) * 2 * Math.PI;
     const targetOffset = Math.random() * 2 * Math.PI;
@@ -186,11 +209,15 @@
   }
 
   function showResult() {
-    // Pointer is on the right side (angle = 0 in canvas = 3 o'clock)
-    // Normalize angle to find which segment is at the pointer
     const normalized = ((2 * Math.PI - (currentAngle % (2 * Math.PI))) + 2 * Math.PI) % (2 * Math.PI);
     const index = Math.floor(normalized / arc) % options.length;
-    document.getElementById("result").textContent = options[index];
+    const name = options[index];
+    const q = encodeURIComponent(name + ' Berlin');
+    document.getElementById("result").textContent = name;
+    document.getElementById("map-links").innerHTML =
+      `<a class="map-link map-link-google" href="https://www.google.com/maps/dir/?api=1&destination=${q}&travelmode=transit" target="_blank" rel="noopener">Google Maps</a>` +
+      `<a class="map-link map-link-apple" href="https://maps.apple.com/?daddr=${q}&dirflg=r" target="_blank" rel="noopener">Apple Maps</a>` +
+      `<a class="map-link map-link-osm" href="https://www.openstreetmap.org/search?query=${q}" target="_blank" rel="noopener">OpenStreetMap</a>`;
   }
 
   drawWheel(currentAngle);
